@@ -66,4 +66,5 @@ npar=df.to_numpy()
 print(npar.shape)
 npar=np.concatenate((npar,np.array([[1,2,3,4]]).T),axis=1)
 
-print(npar)
+for i in range(1,6):
+    print(i)

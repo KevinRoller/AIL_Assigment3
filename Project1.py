@@ -55,8 +55,8 @@ def cleanData(df:pd.DataFrame):
     df['container'][df['container']=='hand']='hands-on'
     df['container'][df['container']=='clay bot']='pot'
     df['container'][df['container']=='tray ']='tray'
-    df.drop(df[df["viewer feeling of youtuber's style "]=='x'].index, inplace=True)
-    #print(df["viewer feeling of youtuber's style "].unique())
+    df.drop(df[(df["viewer feeling of youtuber's style "]=='x')|(df["viewer feeling of youtuber's style "]=='0')].index, inplace=True)
+    print(df["viewer feeling of youtuber's style "].unique())
     df=df.dropna()
     df=makeDuration(df)
     df['duration']=df['duration']/1000
@@ -81,8 +81,8 @@ npData=(df.iloc[:,2:]).to_numpy()
 # print(df.columns)
 # print(npData.shape)
 np.random.shuffle(npData)
-#print(npData[:,17])
-for i in range(6):
+print(npData[:,17])
+for i in range(1,6):
     npData=np.concatenate((npData,(np.array([npData[:,17]==i])).astype(int).T),axis=1)
 print(npData[:,18:])
 #print(npData1.shape)
@@ -224,13 +224,13 @@ class LogitRegression() :
 
 #Model training
 model=[1,1,1,1,1,1,1]
-for i in range(6):    
+for i in range(1,6):    
     if i>=3:
         model[i] = LogitRegression( learning_rate = 0.1, iterations = 1000 )
     else:
         model[i] = LogitRegression( learning_rate = 0.01, iterations = 500 )
-    print(Y_train[i])
-    model[i].fit( X_train, Y_train[:,i] )    
+    #print(Y_train[i])
+    model[i].fit( X_train, Y_train[:,i-1] )    
     # Prediction on test set
     Y_pred = model[i].predict(X_test)    
     # measure performance    
@@ -238,7 +238,7 @@ for i in range(6):
     # counter    
     count = 0    
     for count in range( np.size( Y_pred ) ) :  
-        if Y_test[count,i] == Y_pred[count] :            
+        if Y_test[count,i-1] == Y_pred[count] :            
             correctly_classified = correctly_classified + 1
     print( "Accuracy on test set by our model       :  ", i , ( 
         correctly_classified / count ) * 100 )
@@ -246,7 +246,7 @@ correctly=0
 for i in range(X_test.shape[0]):
     max=-10
     maxPred=0
-    for j in range(6):
+    for j in range(3,6):
         if (model[j].prob(X_test[i]))>max:
             max=(model[j].prob(X_test[i]))
             maxPred=j
